@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Actions\Webshop\AddProductVariantToCart;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -18,9 +19,13 @@ class Product extends Component
 
     }
 
-    public function addToCart()
+    public function addToCart(AddProductVariantToCart $cart)
     {
         $this->validate();
+
+        $cart->add(
+            variantId: $this->variant
+        );
     }
 
     #[Computed]
