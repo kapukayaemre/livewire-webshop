@@ -29,6 +29,8 @@ class Product extends Component
             variantId: $this->variant
         );
 
+        $this->dispatch('productAddedToCart');
+
         $this->banner('Your product has been added to your cart');
     }
 
