@@ -3,20 +3,29 @@
 namespace App\Livewire;
 
 use App\Factories\CartFactory;
+use App\Models\CartItem;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Money\Currency;
+use Money\Money;
 
 class Cart extends Component
 {
     #[Computed]
+    public function cart()
+    {
+        return CartFactory::make()->loadMissing('items', 'items.product', 'items.variant');
+    }
+    #[Computed]
     public function items()
     {
-        return CartFactory::make()->items;
+        return $this->cart->items;
     }
 
     public function increment($itemId)
     {
-        $cartItem = CartFactory::make()->items()->find($itemId);
+        $cartItem = $this->cart->items()->find($itemId);
 
         if ($cartItem->quantity > 0) {
             $cartItem->increment('quantity');
@@ -25,7 +34,7 @@ class Cart extends Component
 
     public function decrement($itemId)
     {
-        $cartItem = CartFactory::make()->items()->find($itemId);
+        $cartItem = $this->cart->items()->find($itemId);
 
         if ($cartItem->quantity > 1) {
             $cartItem->decrement('quantity');
@@ -34,7 +43,7 @@ class Cart extends Component
 
     public function delete($itemId)
     {
-        CartFactory::make()->items()->where('id', $itemId)->delete();
+        $this->cart->items()->where('id', $itemId)->delete();
 
         $this->dispatch('productRemovedFromCart');
     }
